@@ -1,6 +1,7 @@
 {
   "name": "vatch-vite",
-  "version": "0.0.0",
+  "description":"https://github.com/scenaristeur/vatch-vite",
+  "version": "0.0.1",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
