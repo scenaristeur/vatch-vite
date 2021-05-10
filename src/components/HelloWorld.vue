@@ -1,13 +1,14 @@
 <template>
   <h1>{{ msg }}</h1>
 
-  C
+
   <div class="chat">
     <div class="wrapper">
-      <ul id="messages"></ul>
+      <ul id="messages">
+        <li>!!! USER NOT CONNECTED !!!</li>
+      </ul>
     </div>
   </div>
-  D
 
   <p>
     <a href="https://vitejs.dev/guide/features.html" target="_blank">
@@ -29,7 +30,8 @@ import { defineProps, reactive } from 'vue'
 
 //init
 let pathsep='/' //  ... / for linux, \\ for Windows
-
+var socket = io(':3000');
+console.log(socket)
 
 
 socket.on('init', function(init) {
@@ -37,7 +39,7 @@ socket.on('init', function(init) {
 
   pathsep = init.pathsep
   let item = document.createElement('li');
-  item.textContent = init.welcome;
+  item.textContent = init.welcome+ " "+init.users+ " users"
   messages.appendChild(item);
   window.scrollTo(0, document.body.scrollHeight);
 });
@@ -70,13 +72,14 @@ socket.on('cat file', function(msg) {
 });
 
 socket.on('connect', () => {
-    let messages = document.getElementById('messages');
+  messages.innerHTML = ""
   console.log('user connected');
   document.body.style.backgroundColor = "rgba(11,156,49,0.1)"
 });
 socket.on('disconnect', () => {
   console.log('user disconnected');
   document.body.style.backgroundColor = "rgba(156,11,49,0.1)"
+  messages.innerHTML = "!!! USER NOT CONNECTED !!!"
 });
 
 
