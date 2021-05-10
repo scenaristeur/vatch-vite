@@ -1,5 +1,5 @@
-# Vatcher-vue client app 
-- server repo : https://github.com/scenaristeur/vatcher-vite
+# Vatcher-vue client app
+- server repo : https://github.com/scenaristeur/vatch
 
 
 # chat socket.io vuejs
