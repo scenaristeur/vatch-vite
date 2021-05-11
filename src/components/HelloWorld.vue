@@ -30,7 +30,7 @@ import { defineProps, reactive } from 'vue'
 
 //init
 let pathsep='/' //  ... / for linux, \\ for Windows
-var socket = io(':3000');
+
 console.log(socket)
 
 
