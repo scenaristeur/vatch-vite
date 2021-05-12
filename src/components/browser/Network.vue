@@ -1,9 +1,33 @@
 <template>
   <div>
-    Network>
-    <div>
-      <div style="height:500px" id="mynetwork">N/A</div>
+    <div id="mynetwork" class="network">N/A</div>
+
+
+    <div class="preview">
+      <textarea id="content" rows="25" cols="50" style="display:none" >
+      </textarea>
+      <img id="image" width="425px" height="400px" style="display:none" />
+      <br>
+      <input id="path" autocomplete="off" />
+      <button @click="save">Save</button>
+      <button @click="clusterByGroup">Cluster By group</button>
+
     </div>
+
+    <div class="chat">
+      <div class="wrapper">
+        <ul id="messages"></ul>
+      </div>
+    </div>
+    <div class="doc">
+      <!-- <a href="./babylon" >Baby</a> -->
+      <a href="https://scenaristeur.github.io/ipgs/about" target="_blank">WAnt to CReate BIg MindMaps ? TRy Ipgs</a>
+    </div>
+
+    <form id="form" action="">
+      <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+
   </div>
 </template>
 
@@ -12,16 +36,36 @@ import { DataSet } from "vis-data/esnext";
 import { Network } from "vis-network/esnext";
 import "vis-network/styles/vis-network.css";
 
+let socket = io();
+
 export default {
   name: 'Network',
   mounted(){
+
+    let messages = document.getElementById('messages');
+    let form = document.getElementById('form');
+    let input = document.getElementById('input');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (input.value) {
+        socket.emit('chat message', input.value);
+        input.value = '';
+      }
+    });
+
+
+
+
+
     // create an array with nodes
     const nodes = new DataSet([
-      { id: 1, label: "Node 1" },
-      { id: 2, label: "Node 2" },
-      { id: 3, label: "Node 3" },
-      { id: 4, label: "Node 4" },
-      { id: 5, label: "Node 5" }
+      { id: 1, label: "Node 1", group: "impaire" },
+      { id: 2, label: "Node 2", group: "paire" },
+      { id: 3, label: "Node 3",  group: "impaire" },
+      { id: 4, label: "Node 4", group: "paire" },
+      { id: 5, label: "Node 5",  group: "impaire" },
+      { id: 6, label: "Node 6",  group: "paire" },
     ]);
 
     // create an array with edges
@@ -35,30 +79,117 @@ export default {
 
     // create a network
     const container = document.getElementById("mynetwork");
-    const data = {
+    this.data = {
       nodes: nodes,
       edges: edges
     };
-    const options = {};
-    const network = new Network(container, data, options);
+    const options = {
+      interaction: {
+        navigationButtons: true,
+        //  keyboard: true,
+      },
+      edges : {arrows: 'to'}};
+      this.network = new Network(container, this.data, options);
+
+
+      this.network.on('selectNode', evt => {
+        if (evt.nodes.length == 1) {
+          if (this.network.isCluster(evt.nodes[0]) == true) {
+            this.network.openCluster(evt.nodes[0]);
+          }else{
+            let n_id = evt.nodes[0]
+            input.value = n_id
+            let n = nodes.get(n_id);
+            if (n.type == 'file'){
+              socket.emit('read file', n.id);
+              n.shape = "ellipse"
+              nodes.update(n)
+            }else if (n.type == "folder"){
+              n.shape = "box"
+              nodes.update(n)
+            }
+          }
+        }
+      })
+
+    },
+    methods:{
+      save(){
+        let content = document.getElementById("content").value
+        let path = document.getElementById("path").value
+        console.log(path, content)
+        socket.emit('write file', {path: path, content: content});
+      },
+      /**
+      * Extract given field from items array and return unique values in an array
+      */
+      fieldFromItems(items, field) {
+        var tmpHash = {};
+        for (var n in items) {
+          tmpHash[items[n][field]] = true;
+        }
+
+        return Object.keys(tmpHash);
+      },
+
+
+      collectGroups() {
+        var items = this.data.nodes.get({
+          fields: ['group']
+        });
+        return this.fieldFromItems(items, 'group');
+      },
+
+      clusterByGroup(){
+        // Determine all distinct group id's
+        var groups = this.collectGroups();
+
+        // Cluster per group
+        for (var n in groups) {
+          var group = groups[n];
+
+          this.network.cluster({
+            joinCondition: function(item) {
+              return item.group == group;
+            },
+            clusterNodeProperties: {
+              label: 'Group ' + group,
+              borderWidth: 3,
+              shape: "database",
+              color: 'orange'
+            }
+          });
+        }
+
+      }
+    }
   }
-}
-</script>
+  </script>
 
-<style>
-#mynetwork {
-  margin: 0px;
-  padding: 0px;
-}
+  <style>
+  #mynetwork {
+    width: 600px;
+    height: 400px;
+    border: 1px solid lightgray;
+  }
+  /* body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; } */
 
-#mynetwork {
-  /* position: fixed;
-  left: 0px;
-  top: 0px;
-  bottom: 0px;
-  right: 50%; */
-  /* min-height: 30vh; */
-  border-right: 1px solid lightgray;
-  /* background: green; */
-}
-</style>
+  /*
+
+  #messages { list-style-type: none; margin: 0; padding: 0; }
+  #messages > li { padding: 0.5rem 1rem; }
+  #messages > li:nth-child(odd) { background: #efefef; }
+  .wrapper{
+  // width: 1000px;
+  width:600px;
+  overflow-y:scroll;
+  position:relative;
+  height: 300px;
+  } */
+
+  #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+  #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+  #input:focus { outline: none; }
+  #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+
+  </style>
