@@ -57,6 +57,7 @@ export default {
       console.log('init',init)
 
       pathsep = init.pathsep
+        app.$store.commit("updatepathSep", pathsep)
       let item = document.createElement('li');
       item.textContent = init.welcome+ " "+init.users+ " users"
       messages.appendChild(item);
@@ -88,7 +89,7 @@ export default {
       messages.appendChild(item);
       //  window.scrollTo(0, document.body.scrollHeight);
 
-      // processFile(msg)
+      this.processFile(msg)
     });
 
     socket.on('connect', () => {
@@ -101,6 +102,58 @@ export default {
       document.body.style.backgroundColor = "rgba(156,11,49,0.1)"
       messages.innerHTML = "!!! USER NOT CONNECTED !!!"
     });
+  },
+  methods: {
+    processFile(msg){
+    if(msg.error){
+      alert("Error: ",msg.error)
+      return
+    }
+    if (msg.type == undefined){
+      msg.ext = msg.path.split('.').pop()
+    }
+    //console.log(msg)
+    try{
+      document.getElementById("path").value = msg.path
+      document.getElementById('image').style.display = "none"
+      document.getElementById('content').style.display = "block"
+      document.getElementById("content").value = msg.content
+      if (msg.type == "application/json" || msg.ext =="json"){
+        msg.content = JSON.parse(msg.content)
+      }else if(msg.type != undefined && msg.type.mime != undefined && msg.type.mime.split('/')[0] == 'image'){
+        //console.log(msg.content)
+        let src= 'data:'+msg.type.mime+';base64,' + msg.content;
+        //console.log("image",src)
+        document.getElementById('image').src = src
+        document.getElementById('image').style.display = "block"
+        document.getElementById('content').style.display = "none"
+
+        // let ctx = document.getElementById('canvas').getContext('2d');
+        // let img = new Image();
+        // //let src= 'data:'+msg.type.mime+',' + msg.content;
+        // console.log("src",src)
+        // img.src = src
+        // ctx.drawImage(img, 0, 0);
+        // console.log(ctx)
+
+      }else{
+        console.log(msg)
+      }
+
+      msg.content.nodes != undefined ? nodes.update(msg.content.nodes) : ""
+      msg.content.edges != undefined ? edges.update(msg.content.edges) : ""
+
+      edges.forEach((e) => {
+        if (e.label == "a"){
+          nodes.get(e.from).group = e.to
+        }
+      });
+
+    }catch(e){
+      console.log(e)
+    }
+
+  }
   }
 };
 </script>

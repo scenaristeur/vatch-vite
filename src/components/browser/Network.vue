@@ -2,7 +2,6 @@
   <div>
     <div id="mynetwork" class="network">N/A</div>
 
-
     <div class="preview">
       <textarea id="content" rows="25" cols="50" style="display:none" >
       </textarea>
@@ -99,14 +98,14 @@ export default {
           }else{
             let n_id = evt.nodes[0]
             input.value = n_id
-            let n = nodes.get(n_id);
+            let n = this.data.nodes.get(n_id);
             if (n.type == 'file'){
               socket.emit('read file', n.id);
               n.shape = "ellipse"
-              nodes.update(n)
+              this.data.nodes.update(n)
             }else if (n.type == "folder"){
               n.shape = "box"
-              nodes.update(n)
+              this.data.nodes.update(n)
             }
           }
         }
@@ -161,6 +160,118 @@ export default {
           });
         }
 
+      },
+
+      process(msg){
+        console.log("PROCESS",msg)
+        msg.forEach((item, i) => {
+          switch (item.event) {
+            case "add":
+            this.add(item)
+            break;
+            case "addDir":
+            this.addDir(item)
+            //  linkContainer(item)
+            break;
+            case "unlink":
+            this.unlink(item)
+            this.unlinkContainer(item)
+            break;
+            case "unlinkDir":
+            this.unlinkDir(item)
+            this.unlinkContainer(item)
+            break;
+            case "change":
+            this.change(item)
+            break;
+            default:
+
+          }
+        });
+        //  console.log(network)
+      },
+
+      //https://visjs.github.io/vis-data/data/dataset.html
+      // https://visjs.github.io/vis-network/docs/network/manipulation.html
+      // https://visjs.github.io/vis-network/docs/network/#methodManipulation
+
+      add(item){
+        let color = '#55D5E0'
+        let label = item.path.split(this.pathsep).pop()
+        this.data.nodes.update([{
+          id: item.path, label:label, color:color, type: 'file', group: "file"
+        }])
+        this.linkContainer(item)
+        if (label.startsWith('#')){
+          socket.emit('read file', item.path);
+        }
+
+      },
+      addDir(item){
+        let p = item.path.split(this.pathsep)
+        let color = p.length == 1 ? '#F26619' : '#F6B12D'
+        this.data.nodes.update([{
+          id: item.path, label:p.pop(),shape: 'box', color: color, type: 'folder', group: "folder"
+        }])
+        this.linkContainer(item)
+      },
+      unlink(item){
+        this.data.nodes.remove(item.path);
+      },
+      unlinkDir(item){
+        this.data.nodes.remove(item.path);
+      },
+      linkContainer(item){
+        let splitted = item.path.split(this.pathsep)
+        if (splitted.length > 1){
+          let to = item.path
+          splitted.pop()
+          let from = splitted.join(this.pathsep)
+          let exist_edge =  this.data.edges.get({
+            filter: function (e) {
+              return e.from == from && e.to == to && e.label == "contains";
+            }
+          });
+          if(exist_edge.length == 0){
+            let edge = {from: from, to: to, label: "contains"}
+            this.data.edges.add([edge])
+          }
+        }
+      },
+      unlinkContainer(item){
+        let splitted = item.path.split(this.pathsep)
+        if (splitted.length > 1){
+          let to = item.path
+          splitted.pop()
+          let from = splitted.join(this.pathsep)
+          let edges_to_remove =  this.data.edges.get({
+            filter: function (e) {
+              return e.from == from && e.to == to && e.label == "contains";
+            }
+          });
+          this.data.edges.remove(edges_to_remove)
+        }
+      },
+      change(item){
+        let n = this.data.nodes.get(item.path)
+        n.shape = "star"
+        this.data.nodes.update(n)
+      }
+
+    },
+    watch:{
+      localResources(){
+        this.process(this.localResources)
+      }
+    },
+    computed:{
+      pathsep:{
+            get () { return this.$store.state.pathsep},
+            set (/*value*/) { /*this.updateTodo(value)*/ }
+          },
+      localResources:{
+        get () { return this.$store.state.localResources},
+        set (/*value*/) { /*this.updateTodo(value)*/ }
       }
     }
   }
