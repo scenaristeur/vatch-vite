@@ -6,7 +6,7 @@
       </b-list-group-item>
 
     </b-list-group>
-    {{ localResources}}
+    <!-- {{ localResources}} -->
   </div>
 </template>
 

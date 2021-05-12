@@ -4,6 +4,9 @@
     <h1>{{ msg }}</h1>
 
     <b-container>
+      <b-card class="row" title="NetworkBrowser>">
+        <Network />
+      </b-card>
       <b-row>
         <b-card class="col" title="LocalBrowser>">
           <LocalBrowser />
@@ -12,9 +15,7 @@
           <PodBrowser />
         </b-card>
       </b-row>
-      <b-card class="row" title="NetworkBrowser>">
-        <Network />
-      </b-card>
+
     </b-container>
     <div class="chat">
       <div class="wrapper">
