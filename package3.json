@@ -1,0 +1,24 @@
+{
+  "name": "vatch-vite",
+  "version": "0.0.1",
+  "description": "https://github.com/scenaristeur/vatch-vite",
+  "scripts": {
+    "serve": "vite preview",
+    "build": "vite build",
+    "dev": "vite",
+    "git": "npm run build && git add . && git commit -m",
+    "postgit": "git push && git subtree push --prefix dist origin gh-pages"
+  },
+  "dependencies": {
+    "socket.io": "^4.0.2",
+    "vue": "^3.0.5",
+    "vuex": "^4.0.0-0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.2.2",
+    "@vue/cli-plugin-vuex": "^4.5.13",
+    "@vue/compiler-sfc": "^3.0.5",
+    "vite": "^2.2.3",
+    "vite-plugin-vue2": "^1.5.1"
+  }
+}
