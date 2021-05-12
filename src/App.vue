@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <img
+    <!-- <img
       alt="Vue logo"
       src="./assets/logo.png"
-    />
-    <HelloWorld msg="Hello Vue 2 + Vite" />
+    /> -->
+    <HelloWorld msg="Vatcher is vatching you(r mind)" />
   </div>
 </template>
 

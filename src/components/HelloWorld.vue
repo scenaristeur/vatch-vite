@@ -3,6 +3,28 @@
 
     <h1>{{ msg }}</h1>
 
+    <b-container>
+      <b-row>
+        <b-card class="col" title="LocalBrowser>">
+          <LocalBrowser />
+        </b-card>
+        <b-card class="col" title="LocalBrowser>">
+          <PodBrowser />
+        </b-card>
+      </b-row>
+
+
+      <b-card class="row" title="LocalBrowser>">
+        <Network />
+      </b-card>
+
+
+
+    </b-container>
+
+
+
+
     <div class="chat">
       <div class="wrapper">
         <ul id="messages">
@@ -26,6 +48,11 @@ console.log(socket)
 export default {
   props: {
     msg: String,
+  },
+  components :  {
+    'LocalBrowser' :  () => import ( './browser/LocalBrowser.vue' ),
+    'PodBrowser' :  () => import ( './browser/PodBrowser.vue' ),
+    'Network' :  () => import ( './browser/Network.vue' ),
   },
   data() {
     return {
