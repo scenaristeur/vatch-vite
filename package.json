@@ -2,15 +2,19 @@
   "name": "vue2-vite",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "serve": "vite preview",
     "build": "vite build",
-    "serve": "vite preview"
+    "dev": "vite",
+    "git": "npm run build && git add . && git commit -m",
+    "postgit": "git push && git subtree push --prefix dist origin gh-pages"
   },
   "dependencies": {
     "vite-plugin-vue2": "^1.4.0",
-    "vue": "^2.6.12"
+    "vue": "^2.6.12",
+    "vuex": "^3.4.0"
   },
   "devDependencies": {
+    "@vue/cli-plugin-vuex": "^4.5.13",
     "vite": "^2.0.5"
   }
 }

@@ -8,4 +8,8 @@ module.exports = {
   plugins: [createVuePlugin()],
   base: base,
   publicPath: publicPath,
+  server: {
+		port: 3001,
+		strictPort: true
+	}
 };
