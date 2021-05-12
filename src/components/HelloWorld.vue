@@ -8,23 +8,14 @@
         <b-card class="col" title="LocalBrowser>">
           <LocalBrowser />
         </b-card>
-        <b-card class="col" title="LocalBrowser>">
+        <b-card class="col" title="PodBrowser>">
           <PodBrowser />
         </b-card>
       </b-row>
-
-
-      <b-card class="row" title="LocalBrowser>">
+      <b-card class="row" title="NetworkBrowser>">
         <Network />
       </b-card>
-
-
-
     </b-container>
-
-
-
-
     <div class="chat">
       <div class="wrapper">
         <ul id="messages">
@@ -60,9 +51,9 @@ export default {
     };
   },
   mounted(){
-
+    let app = this
     socket.on('init', function(init) {
-      console.log(init)
+      console.log('init',init)
 
       pathsep = init.pathsep
       let item = document.createElement('li');
@@ -72,7 +63,7 @@ export default {
     });
 
     socket.on('chat message', function(msg) {
-      console.log(msg)
+      console.log('chat message',msg)
       let item = document.createElement('li');
       item.textContent = msg;
       messages.appendChild(item);
@@ -80,8 +71,9 @@ export default {
     });
 
     socket.on('watcher event', function(msg) {
-      console.log(msg)
+      console.log("Watcher event",msg)
       //  process(msg)
+      app.$store.commit("updateLocalResources", msg)
       let item = document.createElement('li');
       item.textContent = JSON.stringify(msg);
       messages.appendChild(item);
@@ -89,7 +81,7 @@ export default {
     });
 
     socket.on('cat file', function(msg) {
-      console.log(msg)
+      console.log("cat file", msg)
       let item = document.createElement('li');
       item.textContent = msg;
       messages.appendChild(item);
