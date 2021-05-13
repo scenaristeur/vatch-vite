@@ -91,6 +91,7 @@ export default {
       this.network = new Network(container, this.data, options);
 
 
+
       this.network.on('selectNode', evt => {
         if (evt.nodes.length == 1) {
           if (this.network.isCluster(evt.nodes[0]) == true) {
@@ -110,6 +111,8 @@ export default {
           }
         }
       })
+
+      this.localResources = this.$store.state.localResources
 
     },
     methods:{
