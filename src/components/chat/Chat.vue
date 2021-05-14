@@ -1,13 +1,13 @@
 <template>
   <div>
     Chat
-    <!-- <div class="chat">
+    <div class="chat">
       <div class="wrapper">
         <ul id="messages">
           <li>!!! USER NOT CONNECTED !!!</li>
         </ul>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 

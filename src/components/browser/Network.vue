@@ -1,6 +1,7 @@
 <template>
   <div>
     <div id="mynetwork" class="network">N/A</div>
+    <button @click="clusterByGroup">Cluster By group</button>
 
     <div class="preview">
       <textarea id="content" rows="25" cols="50" style="display:none" >
@@ -9,7 +10,7 @@
       <br>
       <input id="path" autocomplete="off" />
       <button @click="save">Save</button>
-      <button @click="clusterByGroup">Cluster By group</button>
+
 
     </div>
 
@@ -50,7 +51,7 @@ export default {
     form.addEventListener('submit', function(e) {
       e.preventDefault();
       if (input.value) {
-        socket.emit('chat message', input.value);
+        app.$socket.emit('chat message', input.value);
         input.value = '';
       }
     });
@@ -103,9 +104,9 @@ export default {
             input.value = n_id
             let n = this.data.nodes.get(n_id);
             console.log("selected",n)
-            console.log("socket",socket)
+            console.log("socket",this.$socket)
             if (n.type == 'file'){
-              socket.emit('read file', n.id);
+              this.$socket.emit('read file', n.id);
               n.shape = "ellipse"
               this.data.nodes.update(n)
             }else if (n.type == "folder"){
@@ -116,7 +117,7 @@ export default {
         }
       })
 
-      socket.on('cat file', function(msg) {
+      this.$socket.on('cat file', function(msg) {
         console.log("cat file", msg)
         app.processFile(msg)
         // let item = document.createElement('li');
@@ -134,7 +135,7 @@ export default {
         let content = document.getElementById("content").value
         let path = document.getElementById("path").value
         console.log(path, content)
-        socket.emit('write file', {path: path, content: content});
+        this.$socket.emit('write file', {path: path, content: content});
       },
       /**
       * Extract given field from items array and return unique values in an array
@@ -274,7 +275,7 @@ export default {
         }])
         this.linkContainer(item)
         if (label.startsWith('#')){
-          socket.emit('read file', item.path);
+          this.$socket.emit('read file', item.path);
         }
 
       },

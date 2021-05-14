@@ -1,8 +1,11 @@
 import Vue from 'vue';
 import App from './App.vue';
 import store from './store'
-import "./js/socket.io.min.js"
-window.socket = io(':3000');
+
+import VueSocket from './plugins/vue-socket';
+
+// Load our IPFS plugin.
+Vue.use(VueSocket);
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 // Install BootstrapVue
