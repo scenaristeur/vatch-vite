@@ -1,0 +1,1 @@
+import{n as t}from"./index.7608a37d.js";import"./vendor.a3978fed.js";const n={};var e=t({name:"Chat"},(function(){var t=this,n=t.$createElement;return(t._self._c||n)("div",[t._v(" Chat ")])}),[],!1,(function(t){for(let e in n)this[e]=n[e]}),null,null,null);e.options.__file="src/components/chat/Chat.vue";var o=e.exports;export default o;
