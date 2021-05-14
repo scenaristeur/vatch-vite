@@ -64,7 +64,7 @@ export default {
       let item = document.createElement('li');
       item.textContent = init.welcome+ " "+init.users+ " users"
       messages.appendChild(item);
-      window.scrollTo(0, document.body.scrollHeight);
+    //  window.scrollTo(0, document.body.scrollHeight);
     });
 
     socket.on('chat message', function(msg) {
@@ -72,7 +72,7 @@ export default {
       let item = document.createElement('li');
       item.textContent = msg;
       messages.appendChild(item);
-      window.scrollTo(0, document.body.scrollHeight);
+    //  window.scrollTo(0, document.body.scrollHeight);
     });
 
     socket.on('watcher event', function(msg) {
@@ -82,7 +82,7 @@ export default {
       let item = document.createElement('li');
       item.textContent = JSON.stringify(msg);
       messages.appendChild(item);
-      window.scrollTo(0, document.body.scrollHeight);
+    //  window.scrollTo(0, document.body.scrollHeight);
     });
 
     socket.on('cat file', function(msg) {
