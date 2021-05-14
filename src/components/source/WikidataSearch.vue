@@ -13,20 +13,49 @@
         </b-button>
       </template>
       <p class="my-4">
-
+        <a href="https://www.wikidata.org/w/index.php?title=Special%3ASearch&go=Go&ns0=1&ns120=1" target="_blank">Manual search</a>
         <vue-bootstrap-typeahead
         :data="items"
         v-model="itemSearch"
         size="lg"
-        :serializer="s => s.match.text +' ('+s.description+')'"
+        :serializer="s => s.match.text"
         placeholder="type two letters for search on Wikidata"
-        @hit="selectedItem = $event"
-        />
-        <!-- <b-input @change="change" placeholder="type two letters for search on Wikidata" @input="input" /> -->
-      </p>
+        @hit="selectedItem = $event">
+        <!-- Append a button -->
+        <!-- <template slot="append">
 
-    </b-modal>
-  </div>
+        <button @click="getItems" class="btn btn-primary">
+        Search
+      </button>
+    </template> -->
+
+
+    <template slot="suggestion" slot-scope="{ data }">
+
+      <b class="md-2">{{ data.match.text}}&nbsp;</b>
+      <small><i>{{data.description}}</i></small>
+      <!-- <img
+      class="rounded-circle"
+      :src="data.avatar_url"
+      style="width: 40px; height: 40px;" /> -->
+
+      <!-- Note: the v-html binding is used, as htmlText contains
+      the suggestion text highlighted with <strong> tags -->
+      <!-- <span class="ml-4" v-html="htmlText"></span>
+      <i class="ml-auto fab fa-github-square fa-2x"></i>  -->
+
+    </template>
+
+
+
+  </vue-bootstrap-typeahead>
+  <!-- <b-input @change="change" placeholder="type two letters for search on Wikidata" @input="input" /> -->
+
+  <a :href="conceptUri" target="_blank">{{ conceptUri }}</a>
+</p>
+
+</b-modal>
+</div>
 </template>
 
 <script>
@@ -48,11 +77,13 @@ export default {
       items: [],
       itemSearch: '',
       selectedItem: null,
-      loading: false
+      loading: false,
+      conceptUri: ""
     }
   },
   methods: {
     async getItems(query) {
+    //  this.conceptUri = ""
       if(query.length>0){
         this.loading = true
         let search_url = API_URL+"&language="+this.language+"&search="+query
@@ -93,6 +124,8 @@ export default {
     itemSearch: _.debounce(function(item) { this.getItems(item) }, 500),
     selectedItem(){
       console.log(this.selectedItem)
+      this.conceptUri = this.selectedItem.concepturi
+      console.log("conceptUri",this.conceptUri)
     }
   }
 
