@@ -37,8 +37,12 @@ import "vis-network/styles/vis-network.css";
 
 export default {
   name: 'Network',
+  created(){
+    this.localResources = this.$store.state.localResources
+    console.log(this.localResources)
+  },
   mounted(){
-
+    let app = this
     let messages = document.getElementById('messages');
     let form = document.getElementById('form');
     let input = document.getElementById('input');
@@ -112,7 +116,17 @@ export default {
         }
       })
 
-      this.localResources = this.$store.state.localResources
+      socket.on('cat file', function(msg) {
+        console.log("cat file", msg)
+        app.processFile(msg)
+        // let item = document.createElement('li');
+        // item.textContent = msg;
+        // messages.appendChild(item);
+        //  window.scrollTo(0, document.body.scrollHeight);
+
+
+      });
+
 
     },
     methods:{
@@ -192,6 +206,60 @@ export default {
           }
         });
         //  console.log(network)
+      },
+      processFile(msg){
+        if(msg.error){
+          alert("Error: ",msg.error)
+          return
+        }
+        if (msg.type == undefined){
+          msg.ext = msg.path.split('.').pop()
+        }
+        //console.log(msg)
+        // try{
+        document.getElementById("path").value = msg.path
+        document.getElementById('image').style.display = "none"
+        document.getElementById('content').style.display = "block"
+        document.getElementById("content").value = msg.content
+        // if (msg.type == "application/json" || msg.ext =="json"){
+        //   console.log("TYPEOF" , typeof msg.content)
+        //   // let cont = JSON.parse(msg.content)
+        //   // console.log("Cont",cont)
+        // //  msg.content = JSON.parse(msg.content) || msg.content
+        // }else
+        if(msg.type != undefined && msg.type.mime != undefined && msg.type.mime.split('/')[0] == 'image'){
+          //console.log(msg.content)
+          let src= 'data:'+msg.type.mime+';base64,' + msg.content;
+          //console.log("image",src)
+          document.getElementById('image').src = src
+          document.getElementById('image').style.display = "block"
+          document.getElementById('content').style.display = "none"
+
+          // let ctx = document.getElementById('canvas').getContext('2d');
+          // let img = new Image();
+          // //let src= 'data:'+msg.type.mime+',' + msg.content;
+          // console.log("src",src)
+          // img.src = src
+          // ctx.drawImage(img, 0, 0);
+          // console.log(ctx)
+
+        }else{
+          console.log(msg)
+        }
+
+        msg.content.nodes != undefined ? this.data.nodes.update(msg.content.nodes) : ""
+        msg.content.edges != undefined ? this.data.edges.update(msg.content.edges) : ""
+
+        this.data.edges.forEach((e) => {
+          if (e.label == "a"){
+            this.data.nodes.get(e.from).group = e.to
+          }
+        });
+        //
+        // }catch(e){
+        //   console.log(e)
+        // }
+
       },
 
       //https://visjs.github.io/vis-data/data/dataset.html

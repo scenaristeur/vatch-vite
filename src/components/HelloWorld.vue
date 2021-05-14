@@ -9,6 +9,11 @@
       <b-card class="row" title="NetworkBrowser>">
         <Network />
       </b-card>
+
+      <b-row>
+<Chat class="col" />
+
+      </b-row>
       <b-row>
         <b-card class="col" title="LocalBrowser>">
           <LocalBrowser />
@@ -48,6 +53,8 @@ export default {
     'LocalBrowser' :  () => import ( './browser/LocalBrowser.vue' ),
     'PodBrowser' :  () => import ( './browser/PodBrowser.vue' ),
     'Network' :  () => import ( './browser/Network.vue' ),
+    'Chat' :  () => import ( './chat/Chat.vue' ),
+    'Input' :  () => import ( './input/Input.vue' ),
     'WikidataSearch' :  () => import ( './source/WikidataSearch.vue' ),
   },
   data() {
@@ -56,6 +63,7 @@ export default {
     };
   },
   created(){
+
     window.onbeforeunload = () => {
       socket.emit('leave', this.username);
     }
@@ -149,14 +157,14 @@ export default {
           console.log(msg)
         }
 
-        msg.content.nodes != undefined ? nodes.update(msg.content.nodes) : ""
-        msg.content.edges != undefined ? edges.update(msg.content.edges) : ""
-
-        edges.forEach((e) => {
-          if (e.label == "a"){
-            nodes.get(e.from).group = e.to
-          }
-        });
+        // msg.content.nodes != undefined ? nodes.update(msg.content.nodes) : ""
+        // msg.content.edges != undefined ? edges.update(msg.content.edges) : ""
+        //
+        // edges.forEach((e) => {
+        //   if (e.label == "a"){
+        //     nodes.get(e.from).group = e.to
+        //   }
+        // });
 
       }catch(e){
         console.log(e)
