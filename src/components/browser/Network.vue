@@ -100,6 +100,7 @@ export default {
             let n_id = evt.nodes[0]
             input.value = n_id
             let n = this.data.nodes.get(n_id);
+            console.log("selected",n)
             if (n.type == 'file'){
               socket.emit('read file', n.id);
               n.shape = "ellipse"
@@ -269,9 +270,9 @@ export default {
     },
     computed:{
       pathsep:{
-            get () { return this.$store.state.pathsep},
-            set (/*value*/) { /*this.updateTodo(value)*/ }
-          },
+        get () { return this.$store.state.pathsep},
+        set (/*value*/) { /*this.updateTodo(value)*/ }
+      },
       localResources:{
         get () { return this.$store.state.localResources},
         set (/*value*/) { /*this.updateTodo(value)*/ }
