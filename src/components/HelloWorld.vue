@@ -3,6 +3,8 @@
 
     <h1>{{ msg }}</h1>
 
+    <WikidataSearch />
+
     <b-container>
       <b-card class="row" title="NetworkBrowser>">
         <Network />
@@ -45,6 +47,7 @@ export default {
     'LocalBrowser' :  () => import ( './browser/LocalBrowser.vue' ),
     'PodBrowser' :  () => import ( './browser/PodBrowser.vue' ),
     'Network' :  () => import ( './browser/Network.vue' ),
+    'WikidataSearch' :  () => import ( './source/WikidataSearch.vue' ),
   },
   data() {
     return {
@@ -57,7 +60,7 @@ export default {
       console.log('init',init)
 
       pathsep = init.pathsep
-        app.$store.commit("updatepathSep", pathsep)
+      app.$store.commit("updatepathSep", pathsep)
       let item = document.createElement('li');
       item.textContent = init.welcome+ " "+init.users+ " users"
       messages.appendChild(item);
@@ -105,55 +108,55 @@ export default {
   },
   methods: {
     processFile(msg){
-    if(msg.error){
-      alert("Error: ",msg.error)
-      return
-    }
-    if (msg.type == undefined){
-      msg.ext = msg.path.split('.').pop()
-    }
-    //console.log(msg)
-    try{
-      document.getElementById("path").value = msg.path
-      document.getElementById('image').style.display = "none"
-      document.getElementById('content').style.display = "block"
-      document.getElementById("content").value = msg.content
-      if (msg.type == "application/json" || msg.ext =="json"){
-        msg.content = JSON.parse(msg.content)
-      }else if(msg.type != undefined && msg.type.mime != undefined && msg.type.mime.split('/')[0] == 'image'){
-        //console.log(msg.content)
-        let src= 'data:'+msg.type.mime+';base64,' + msg.content;
-        //console.log("image",src)
-        document.getElementById('image').src = src
-        document.getElementById('image').style.display = "block"
-        document.getElementById('content').style.display = "none"
+      if(msg.error){
+        alert("Error: ",msg.error)
+        return
+      }
+      if (msg.type == undefined){
+        msg.ext = msg.path.split('.').pop()
+      }
+      //console.log(msg)
+      try{
+        document.getElementById("path").value = msg.path
+        document.getElementById('image').style.display = "none"
+        document.getElementById('content').style.display = "block"
+        document.getElementById("content").value = msg.content
+        if (msg.type == "application/json" || msg.ext =="json"){
+          msg.content = JSON.parse(msg.content)
+        }else if(msg.type != undefined && msg.type.mime != undefined && msg.type.mime.split('/')[0] == 'image'){
+          //console.log(msg.content)
+          let src= 'data:'+msg.type.mime+';base64,' + msg.content;
+          //console.log("image",src)
+          document.getElementById('image').src = src
+          document.getElementById('image').style.display = "block"
+          document.getElementById('content').style.display = "none"
 
-        // let ctx = document.getElementById('canvas').getContext('2d');
-        // let img = new Image();
-        // //let src= 'data:'+msg.type.mime+',' + msg.content;
-        // console.log("src",src)
-        // img.src = src
-        // ctx.drawImage(img, 0, 0);
-        // console.log(ctx)
+          // let ctx = document.getElementById('canvas').getContext('2d');
+          // let img = new Image();
+          // //let src= 'data:'+msg.type.mime+',' + msg.content;
+          // console.log("src",src)
+          // img.src = src
+          // ctx.drawImage(img, 0, 0);
+          // console.log(ctx)
 
-      }else{
-        console.log(msg)
+        }else{
+          console.log(msg)
+        }
+
+        msg.content.nodes != undefined ? nodes.update(msg.content.nodes) : ""
+        msg.content.edges != undefined ? edges.update(msg.content.edges) : ""
+
+        edges.forEach((e) => {
+          if (e.label == "a"){
+            nodes.get(e.from).group = e.to
+          }
+        });
+
+      }catch(e){
+        console.log(e)
       }
 
-      msg.content.nodes != undefined ? nodes.update(msg.content.nodes) : ""
-      msg.content.edges != undefined ? edges.update(msg.content.edges) : ""
-
-      edges.forEach((e) => {
-        if (e.label == "a"){
-          nodes.get(e.from).group = e.to
-        }
-      });
-
-    }catch(e){
-      console.log(e)
     }
-
-  }
   }
 };
 </script>
