@@ -35,8 +35,6 @@ import { DataSet } from "vis-data/esnext";
 import { Network } from "vis-network/esnext";
 import "vis-network/styles/vis-network.css";
 
-let socket = io();
-
 export default {
   name: 'Network',
   mounted(){
@@ -101,6 +99,7 @@ export default {
             input.value = n_id
             let n = this.data.nodes.get(n_id);
             console.log("selected",n)
+            console.log("socket",socket)
             if (n.type == 'file'){
               socket.emit('read file', n.id);
               n.shape = "ellipse"

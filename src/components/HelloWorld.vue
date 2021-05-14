@@ -39,6 +39,7 @@ let pathsep='/' //  ... / for linux, \\ for Windows
 // let socket = io(':3000');
 // console.log(socket)
 
+
 export default {
   props: {
     msg: String,
@@ -54,6 +55,11 @@ export default {
       count: 0,
     };
   },
+  created(){
+    window.onbeforeunload = () => {
+      socket.emit('leave', this.username);
+    }
+  },
   mounted(){
     let app = this
     socket.on('init', function(init) {
@@ -64,7 +70,7 @@ export default {
       let item = document.createElement('li');
       item.textContent = init.welcome+ " "+init.users+ " users"
       messages.appendChild(item);
-    //  window.scrollTo(0, document.body.scrollHeight);
+      //  window.scrollTo(0, document.body.scrollHeight);
     });
 
     socket.on('chat message', function(msg) {
@@ -72,7 +78,7 @@ export default {
       let item = document.createElement('li');
       item.textContent = msg;
       messages.appendChild(item);
-    //  window.scrollTo(0, document.body.scrollHeight);
+      //  window.scrollTo(0, document.body.scrollHeight);
     });
 
     socket.on('watcher event', function(msg) {
@@ -82,7 +88,7 @@ export default {
       let item = document.createElement('li');
       item.textContent = JSON.stringify(msg);
       messages.appendChild(item);
-    //  window.scrollTo(0, document.body.scrollHeight);
+      //  window.scrollTo(0, document.body.scrollHeight);
     });
 
     socket.on('cat file', function(msg) {
@@ -92,7 +98,7 @@ export default {
       messages.appendChild(item);
       //  window.scrollTo(0, document.body.scrollHeight);
 
-      this.processFile(msg)
+      app.processFile(msg)
     });
 
     socket.on('connect', () => {
