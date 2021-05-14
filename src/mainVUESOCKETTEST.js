@@ -1,8 +1,22 @@
 import Vue from 'vue';
 import App from './App.vue';
 import store from './store'
-import "./js/socket.io.min.js"
-window.socket = io(':3000');
+
+//import socketio from 'socket.io-client';
+import VueSocketIO from 'vue-socket.io';
+
+//export const SocketInstance = socketio(':3000');
+
+Vue.use(new VueSocketIO({
+    debug: true,
+    connection: 'http://localhost:3000',
+    vuex: {
+        store,
+        actionPrefix: 'SOCKET_',
+        mutationPrefix: 'SOCKET_'
+    },
+  //  options: { path: "/my-app/" } //Optional options
+}))
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 // Install BootstrapVue
