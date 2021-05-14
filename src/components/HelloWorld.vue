@@ -3,6 +3,7 @@
 
     <h1>{{ msg }}</h1>
 
+    <Users />
     <WikidataSearch />
 
     <b-container>
@@ -11,7 +12,7 @@
       </b-card>
 
       <b-row>
-<Chat class="col" />
+        <Chat class="col" />
 
       </b-row>
       <b-row>
@@ -56,21 +57,11 @@ export default {
     'Chat' :  () => import ( './chat/Chat.vue' ),
     'Input' :  () => import ( './input/Input.vue' ),
     'WikidataSearch' :  () => import ( './source/WikidataSearch.vue' ),
-  },
-  data() {
-    return {
-      count: 0,
-    };
+    'Users' :  () => import ( './layout/Users.vue' ),
   },
   created(){
-
-    window.onbeforeunload = () => {
-     this.$socket.emit('leave', this.username);
-    }
-  },
-  mounted(){
     let app = this
-   this.$socket.on('init', function(init) {
+    this.$socket.on('init', function(init) {
       console.log('init',init)
 
       pathsep = init.pathsep
@@ -81,7 +72,7 @@ export default {
       //  window.scrollTo(0, document.body.scrollHeight);
     });
 
-   this.$socket.on('chat message', function(msg) {
+    this.$socket.on('chat message', function(msg) {
       console.log('chat message',msg)
       let item = document.createElement('li');
       item.textContent = msg;
@@ -89,7 +80,7 @@ export default {
       //  window.scrollTo(0, document.body.scrollHeight);
     });
 
-   this.$socket.on('watcher event', function(msg) {
+    this.$socket.on('watcher event', function(msg) {
       console.log("Watcher event",msg)
       //  process(msg)
       app.$store.commit("updateLocalResources", msg)
@@ -99,7 +90,7 @@ export default {
       //  window.scrollTo(0, document.body.scrollHeight);
     });
 
-   this.$socket.on('cat file', function(msg) {
+    this.$socket.on('cat file', function(msg) {
       console.log("cat file", msg)
       let item = document.createElement('li');
       item.textContent = msg;
@@ -109,12 +100,12 @@ export default {
       app.processFile(msg)
     });
 
-   this.$socket.on('connect', () => {
+    this.$socket.on('connect', () => {
       messages.innerHTML = ""
       console.log('user connected');
       document.body.style.backgroundColor = "rgba(11,156,49,0.1)"
     });
-   this.$socket.on('disconnect', () => {
+    this.$socket.on('disconnect', () => {
       console.log('user disconnected');
       document.body.style.backgroundColor = "rgba(156,11,49,0.1)"
       messages.innerHTML = "!!! USER NOT CONNECTED !!!"
