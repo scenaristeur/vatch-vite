@@ -5,7 +5,7 @@ import store from './store'
 import VueSocket from './plugins/vue-socket';
 
 // Load our IPFS plugin.
-Vue.use(VueSocket);
+Vue.use(VueSocket, {store: store});
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 // Install BootstrapVue

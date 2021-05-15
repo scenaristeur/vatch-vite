@@ -7,12 +7,18 @@ export default new Vuex.Store({
   state: {
     pathsep: '/', //  ... / for linux, \\ for Windows
     users: [],
-    localResources : {},
+    localResources : [],
     podResources: {},
-    netWork: {}
-
+    netWork: {},
+    user: null,
+    chatMessages : [],
+    file: {}
   },
   mutations: {
+    setUser(state, u){
+      console.log(u)
+      state.user = u
+    },
     setUsers(state, u){
       state.users = u
     },
@@ -20,7 +26,14 @@ export default new Vuex.Store({
       state.pathsep = p
     },
     updateLocalResources(state, r){
+      console.log(r)
       state.localResources = r
+    },
+    addChatMessage(state, m){
+      state.chatMessages.push(m)
+    },
+    setFile(state, f){
+      state.file = f
     }
 
   },

@@ -43,14 +43,8 @@
       the suggestion text highlighted with <strong> tags -->
       <!-- <span class="ml-4" v-html="htmlText"></span>
       <i class="ml-auto fab fa-github-square fa-2x"></i>  -->
-
     </template>
-
-
-
   </vue-bootstrap-typeahead>
-  <!-- <b-input @change="change" placeholder="type two letters for search on Wikidata" @input="input" /> -->
-
   <a :href="conceptUri" target="_blank">{{ conceptUri }}</a>
 </p>
 
@@ -70,7 +64,7 @@ export default {
   },
   created(){
     console.log(navigator.language)
-    this.language = navigator.language || 'en'
+    this.language = navigator.language.split("-")[0] || 'en'
   },
   data(){
     return {
@@ -83,7 +77,7 @@ export default {
   },
   methods: {
     async getItems(query) {
-    //  this.conceptUri = ""
+      //  this.conceptUri = ""
       if(query.length>0){
         this.loading = true
         let search_url = API_URL+"&language="+this.language+"&search="+query

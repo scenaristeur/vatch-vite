@@ -47,6 +47,9 @@ index.html on vatch-vite
 
 # vue2 to vue3 migration
 
+# nuxt
+- https://stfalcon.com/en/blog/post/chat-app-creation-vue.js-nuxt.js-node.js-socket.io-vue-socket.io-vuetify.js-technolog
+
 # chat socket.io vuejs
 - https://www.digitalocean.com/community/tutorials/vuejs-vue-socketio
 https://medium.com/js-dojo/build-a-real-time-chat-app-with-vuejs-socket-io-and-nodejs-714c8eefa54e

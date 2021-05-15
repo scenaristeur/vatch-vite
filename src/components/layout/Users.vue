@@ -7,22 +7,11 @@
 <script>
 export default {
   name: 'Users',
-  data(){
-    return{
-      users: []
-    }
-  },
-  creted(){
-    let app = this
-    this.$socket.on('users', function(users) {
-      console.log("users",users)
-      this.users = users
-      app.$store.commit("users", users)
-    });
+  computed:{
+    users:{
+      get () { return this.$store.state.users},
+      set (/*value*/) { /*this.updateTodo(value)*/ }
+    },
   }
 }
 </script>
-
-<style>
-
-</style>

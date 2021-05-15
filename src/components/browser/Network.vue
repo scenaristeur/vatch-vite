@@ -3,31 +3,6 @@
     <div id="mynetwork" class="network">N/A</div>
     <button @click="clusterByGroup">Cluster By group</button>
 
-    <div class="preview">
-      <textarea id="content" rows="25" cols="50" style="display:none" >
-      </textarea>
-      <img id="image" width="425px" height="400px" style="display:none" />
-      <br>
-      <input id="path" autocomplete="off" />
-      <button @click="save">Save</button>
-
-
-    </div>
-
-    <div class="chat">
-      <div class="wrapper">
-        <ul id="messages"></ul>
-      </div>
-    </div>
-    <div class="doc">
-      <!-- <a href="./babylon" >Baby</a> -->
-      <a href="https://scenaristeur.github.io/ipgs/about" target="_blank">WAnt to CReate BIg MindMaps ? TRy Ipgs</a>
-    </div>
-
-    <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Send</button>
-    </form>
-
   </div>
 </template>
 
@@ -38,27 +13,11 @@ import "vis-network/styles/vis-network.css";
 
 export default {
   name: 'Network',
-  created(){
-    this.localResources = this.$store.state.localResources
-    console.log(this.localResources)
-  },
+  // created(){
+  //   this.localResources = this.$store.state.localResources
+  //   console.log(this.localResources)
+  // },
   mounted(){
-    let app = this
-    let messages = document.getElementById('messages');
-    let form = document.getElementById('form');
-    let input = document.getElementById('input');
-
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      if (input.value) {
-        app.$socket.emit('chat message', input.value);
-        input.value = '';
-      }
-    });
-
-
-
-
 
     // create an array with nodes
     const nodes = new DataSet([
@@ -93,8 +52,6 @@ export default {
       edges : {arrows: 'to'}};
       this.network = new Network(container, this.data, options);
 
-
-
       this.network.on('selectNode', evt => {
         if (evt.nodes.length == 1) {
           if (this.network.isCluster(evt.nodes[0]) == true) {
@@ -117,26 +74,12 @@ export default {
         }
       })
 
-      this.$socket.on('cat file', function(msg) {
-        console.log("cat file", msg)
-        app.processFile(msg)
-        // let item = document.createElement('li');
-        // item.textContent = msg;
-        // messages.appendChild(item);
-        //  window.scrollTo(0, document.body.scrollHeight);
-
-
-      });
-
+      // this.localResources = this.$store.state.localResources
+      // console.log(this.localResources)
 
     },
     methods:{
-      save(){
-        let content = document.getElementById("content").value
-        let path = document.getElementById("path").value
-        console.log(path, content)
-        this.$socket.emit('write file', {path: path, content: content});
-      },
+
       /**
       * Extract given field from items array and return unique values in an array
       */
@@ -207,60 +150,6 @@ export default {
           }
         });
         //  console.log(network)
-      },
-      processFile(msg){
-        if(msg.error){
-          alert("Error: ",msg.error)
-          return
-        }
-        if (msg.type == undefined){
-          msg.ext = msg.path.split('.').pop()
-        }
-        //console.log(msg)
-        // try{
-        document.getElementById("path").value = msg.path
-        document.getElementById('image').style.display = "none"
-        document.getElementById('content').style.display = "block"
-        document.getElementById("content").value = msg.content
-        // if (msg.type == "application/json" || msg.ext =="json"){
-        //   console.log("TYPEOF" , typeof msg.content)
-        //   // let cont = JSON.parse(msg.content)
-        //   // console.log("Cont",cont)
-        // //  msg.content = JSON.parse(msg.content) || msg.content
-        // }else
-        if(msg.type != undefined && msg.type.mime != undefined && msg.type.mime.split('/')[0] == 'image'){
-          //console.log(msg.content)
-          let src= 'data:'+msg.type.mime+';base64,' + msg.content;
-          //console.log("image",src)
-          document.getElementById('image').src = src
-          document.getElementById('image').style.display = "block"
-          document.getElementById('content').style.display = "none"
-
-          // let ctx = document.getElementById('canvas').getContext('2d');
-          // let img = new Image();
-          // //let src= 'data:'+msg.type.mime+',' + msg.content;
-          // console.log("src",src)
-          // img.src = src
-          // ctx.drawImage(img, 0, 0);
-          // console.log(ctx)
-
-        }else{
-          console.log(msg)
-        }
-
-        msg.content.nodes != undefined ? this.data.nodes.update(msg.content.nodes) : ""
-        msg.content.edges != undefined ? this.data.edges.update(msg.content.edges) : ""
-
-        this.data.edges.forEach((e) => {
-          if (e.label == "a"){
-            this.data.nodes.get(e.from).group = e.to
-          }
-        });
-        //
-        // }catch(e){
-        //   console.log(e)
-        // }
-
       },
 
       //https://visjs.github.io/vis-data/data/dataset.html
@@ -333,6 +222,7 @@ export default {
     },
     watch:{
       localResources(){
+        console.log("Resources in network",this.localResources)
         this.process(this.localResources)
       }
     },
@@ -355,24 +245,4 @@ export default {
     height: 400px;
     border: 1px solid lightgray;
   }
-  /* body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; } */
-
-  /*
-
-  #messages { list-style-type: none; margin: 0; padding: 0; }
-  #messages > li { padding: 0.5rem 1rem; }
-  #messages > li:nth-child(odd) { background: #efefef; }
-  .wrapper{
-  // width: 1000px;
-  width:600px;
-  overflow-y:scroll;
-  position:relative;
-  height: 300px;
-  } */
-
-  #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
-  #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
-  #input:focus { outline: none; }
-  #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
-
   </style>
