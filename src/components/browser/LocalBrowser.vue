@@ -1,8 +1,8 @@
 <template>
   <div>
     <b-list-group>
-      <b-list-group-item v-for="lr in localResources" :key="lr.path">
-        {{lr.path}}
+      <b-list-group-item v-for="(lr, i) in localResources" :key="i">
+        {{lr}}
       </b-list-group-item>
 
     </b-list-group>
